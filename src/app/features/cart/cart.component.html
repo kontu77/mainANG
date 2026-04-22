@@ -1,0 +1,115 @@
+<div class="cart-page">
+  <div class="page-header">
+    <div class="container">
+      <h1 style="position:relative;z-index:1">Shopping Cart</h1>
+      <p style="position:relative;z-index:1">{{ items.length }} item{{ items.length !== 1 ? 's' : '' }} in your cart</p>
+    </div>
+  </div>
+
+  <div class="container cart-body">
+    @if (success) {
+      <div class="big-success animate-scaleIn">
+        <div class="success-icon">🎉</div>
+        <h2>Order Placed!</h2>
+        <p>{{ success }}</p>
+        <a routerLink="/products" class="btn btn-primary btn-lg" style="margin-top:20px">Continue Shopping</a>
+      </div>
+    } @else if (loading) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (items.length === 0) {
+      <div class="empty-cart animate-scaleIn">
+        <div class="empty-cart-icon">🛒</div>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet</p>
+        <a routerLink="/products" class="btn btn-primary btn-lg" style="margin-top:24px">Start Shopping</a>
+      </div>
+    } @else {
+      @if (error) { <div class="alert-error animate-fadeIn" style="margin-bottom:20px;padding:14px;border-radius:8px;background:#fee2e2;color:#dc2626;border:1px solid #fca5a5">{{ error }}</div> }
+
+      <div class="cart-layout">
+        <!-- Items -->
+        <div class="cart-items animate-fadeInUp">
+          <div class="items-header">
+            <h2>Items</h2>
+            <span class="items-count">{{ items.length }} products</span>
+          </div>
+
+          @for (item of items; track item.productId; let i = $index) {
+            <div class="cart-item" [style.animation-delay]="(i * 0.07) + 's'">
+              <a [routerLink]="['/products', item.productId]" class="item-img-link">
+                <img [src]="item.productImageUrl || 'https://placehold.co/100x100/e8f0fe/1a6cf5?text=P'"
+                     [alt]="item.productName" class="item-img"/>
+              </a>
+              <div class="item-info">
+                <a [routerLink]="['/products', item.productId]" class="item-name">{{ item.productName }}</a>
+                <p class="item-unit-price">${{ item.price | number:'1.2-2' }} each</p>
+              </div>
+              <div class="item-qty">
+                <button class="qty-btn" (click)="updateQuantity(item, -1)"
+                        [disabled]="updating === item.productId || item.quantity <= 1">−</button>
+                <span class="qty-value">
+                  @if (updating === item.productId) {
+                    <span class="spinner" style="width:18px;height:18px;border-width:2px"></span>
+                  } @else {
+                    {{ item.quantity }}
+                  }
+                </span>
+                <button class="qty-btn" (click)="updateQuantity(item, 1)"
+                        [disabled]="updating === item.productId">+</button>
+              </div>
+              <div class="item-total">${{ item.totalPrice | number:'1.2-2' }}</div>
+              <button class="remove-btn" (click)="removeItem(item.productId)"
+                      [disabled]="removing === item.productId" title="Remove">
+                @if (removing === item.productId) {
+                  <span class="spinner" style="width:16px;height:16px;border-width:2px"></span>
+                } @else {
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                  </svg>
+                }
+              </button>
+            </div>
+          }
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary card animate-fadeInUp" style="animation-delay:0.15s">
+          <h2>Order Summary</h2>
+
+          <div class="summary-lines">
+            @for (item of items; track item.productId) {
+              <div class="summary-line">
+                <span>{{ item.productName | slice:0:24 }}{{ item.productName.length > 24 ? '...' : '' }} ×{{ item.quantity }}</span>
+                <span>${{ item.totalPrice | number:'1.2-2' }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <span>Total</span>
+            <span class="total-price">${{ totalPrice | number:'1.2-2' }}</span>
+          </div>
+
+          <button class="btn btn-primary btn-full btn-lg checkout-btn"
+                  (click)="checkout()" [disabled]="checkingOut">
+            @if (checkingOut) { <span class="spinner-sm"></span> Processing... }
+            @else {
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Proceed to Checkout
+            }
+          </button>
+
+          <a routerLink="/products" class="btn btn-ghost btn-full" style="margin-top:10px;text-align:center">
+            ← Continue Shopping
+          </a>
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,104 @@
+<div class="category-manage">
+  <div class="page-header">
+    <div class="container">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;position:relative;z-index:1">
+        <div>
+          <h1>Category Management</h1>
+          <p>{{ categories.length }} categories configured</p>
+        </div>
+        <button class="btn btn-primary" (click)="openCreate()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Category
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container" style="padding-top:32px">
+    @if (success) { <div class="alert alert-success animate-fadeIn">✓ {{ success }}</div> }
+    @if (error && !showModal) { <div class="alert alert-error animate-fadeIn">✗ {{ error }}</div> }
+
+    @if (loading) {
+      <div class="loading-overlay"><div class="spinner"></div></div>
+    } @else if (categories.length === 0) {
+      <div class="card" style="padding:60px 20px">
+        <div class="empty-state">
+          <div class="empty-icon">📁</div>
+          <h3>No categories yet</h3>
+          <p>Create your first category to organize products</p>
+          <button class="btn btn-primary" style="margin-top:16px" (click)="openCreate()">Create Category</button>
+        </div>
+      </div>
+    } @else {
+      <div class="cat-grid animate-fadeInUp">
+        @for (cat of categories; track cat.id; let i = $index) {
+          <div class="cat-card card" [style.animation-delay]="(i * 0.08) + 's'">
+            <div class="cat-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+            </div>
+            <div class="cat-info">
+              <h3>{{ cat.name }}</h3>
+              <p>{{ cat.description }}</p>
+              <span class="badge badge-primary">{{ cat.productCount || 0 }} products</span>
+            </div>
+            <div class="cat-actions">
+              <button class="btn btn-secondary btn-sm" (click)="openEdit(cat)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+                Edit
+              </button>
+              <button class="btn btn-danger btn-sm" (click)="delete(cat.id)" [disabled]="deleting === cat.id">
+                @if (deleting === cat.id) { <span class="spinner-sm-dark"></span> } @else {
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                  </svg>
+                }
+                Delete
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (showModal) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingCategory ? 'Edit Category' : 'New Category' }}</h2>
+        <button class="close-btn" (click)="closeModal()">✕</button>
+      </div>
+      @if (error) { <div class="alert alert-error" style="margin-bottom:16px">{{ error }}</div> }
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group">
+          <label>Name *</label>
+          <input type="text" formControlName="name" placeholder="Category name"
+                 [class.error]="f['name'].invalid && f['name'].touched"/>
+          @if (f['name'].invalid && f['name'].touched) { <span class="error-msg">Name required (min 2)</span> }
+        </div>
+        <div class="form-group">
+          <label>Description *</label>
+          <textarea formControlName="description" placeholder="Describe this category..."
+                    [class.error]="f['description'].invalid && f['description'].touched"></textarea>
+          @if (f['description'].invalid && f['description'].touched) { <span class="error-msg">Description required (min 5)</span> }
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px">
+          <button type="button" class="btn btn-ghost" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="saving">
+            @if (saving) { <span class="spinner-sm"></span> }
+            {{ editingCategory ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

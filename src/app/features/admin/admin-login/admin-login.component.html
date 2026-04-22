@@ -1,0 +1,67 @@
+<div class="auth-page admin-page">
+  <div class="auth-bg">
+    <div class="bg-circle c1"></div>
+    <div class="bg-circle c2"></div>
+    <div class="admin-grid"></div>
+  </div>
+
+  <div class="auth-card admin-card animate-scaleIn">
+    <div class="admin-badge-top">
+      <span>🔐 ADMIN PORTAL</span>
+    </div>
+    <div class="auth-header">
+      <div class="auth-icon admin-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h1>Admin Sign In</h1>
+      <p>Restricted access — authorized personnel only</p>
+    </div>
+
+    @if (error) {
+      <div class="alert-error animate-fadeIn">{{ error }}</div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label>Admin Email</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <input type="email" formControlName="email" placeholder="admin@example.com"
+                 [class.error]="f['email'].invalid && f['email'].touched"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <div class="input-wrap">
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <input [type]="showPw ? 'text' : 'password'" formControlName="password"
+                 placeholder="••••••••" [class.error]="f['password'].invalid && f['password'].touched"/>
+          <button type="button" class="toggle-pw" (click)="showPw = !showPw">
+            {{ showPw ? '🙈' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full btn-lg admin-btn" [disabled]="loading">
+        @if (loading) { <span class="spinner-sm"></span> }
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Enter Admin Panel
+      </button>
+    </form>
+
+    <div style="text-align:center; margin-top:20px; display:flex; flex-direction:column; gap:8px;">
+      <a routerLink="/admin/register" style="font-size:14px; color:var(--primary)">Register as Admin →</a>
+      <a routerLink="/auth/login" style="font-size:13px; color:var(--text-light)">← User login</a>
+    </div>
+  </div>
+</div>

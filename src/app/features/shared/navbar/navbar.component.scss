@@ -1,0 +1,213 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: 70px;
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--primary-dark) 100%);
+  transition: var(--transition);
+
+  &.scrolled {
+    box-shadow: 0 4px 30px rgba(10, 30, 80, 0.3);
+    background: rgba(15, 31, 74, 0.97);
+    backdrop-filter: blur(12px);
+  }
+}
+
+.nav-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  transition: var(--transition);
+  flex-shrink: 0;
+
+  &:hover { opacity: 0.9; transform: scale(1.02); }
+}
+
+.logo-icon {
+  animation: float 4s ease-in-out infinite;
+}
+
+.logo-text { color: white; }
+.logo-accent { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.nav-link {
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.75);
+  font-weight: 500;
+  font-size: 15px;
+  transition: var(--transition);
+
+  &:hover { color: white; background: rgba(255,255,255,0.12); }
+  &.active {
+    color: white;
+    background: rgba(255,255,255,0.15);
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+  }
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+
+  .btn-ghost {
+    color: rgba(255,255,255,0.8);
+    &:hover { background: rgba(255,255,255,0.12); color: white; }
+  }
+}
+
+.cart-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.85);
+  transition: var(--transition);
+
+  &:hover { background: rgba(255,255,255,0.12); color: white; }
+}
+
+.cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--secondary);
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: scaleIn 0.2s ease;
+}
+
+.avatar-btn {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  color: rgba(255,255,255,0.85);
+  transition: var(--transition);
+
+  &:hover { background: rgba(255,255,255,0.12); color: white; }
+}
+
+.admin-badge {
+  padding: 4px 12px;
+  background: var(--accent);
+  color: var(--secondary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+
+  &:hover { background: rgba(255,255,255,0.1); }
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: white;
+    border-radius: 2px;
+    transition: var(--transition);
+    transform-origin: center;
+  }
+
+  &.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  &.open span:nth-child(2) { opacity: 0; }
+  &.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 768px) { display: flex; }
+}
+
+/* Mobile menu */
+.mobile-menu {
+  background: rgba(10, 20, 60, 0.98);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-link {
+  display: block;
+  padding: 12px 16px;
+  color: rgba(255,255,255,0.75);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 15px;
+  transition: var(--transition);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+
+  &:hover { background: rgba(255,255,255,0.08); color: white; }
+  &.accent { color: var(--accent); }
+  &.danger { color: #fc8585; }
+}

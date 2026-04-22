@@ -1,0 +1,208 @@
+<div class="product-list-page">
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-bg">
+      <div class="hero-circle hc1"></div>
+      <div class="hero-circle hc2"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-text animate-fadeInUp">
+        <span class="hero-badge">🛍️ STEP Tech Shop</span>
+        <h1>Discover Amazing <span class="hero-gradient">Products</span></h1>
+        <p>Find the best tech products at unbeatable prices</p>
+      </div>
+      <div class="hero-search animate-fadeInUp" style="animation-delay:0.1s">
+        <div class="search-bar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" placeholder="Search products, categories..." (input)="onSearch($event)" [value]="searchQuery"/>
+          @if (searchQuery) {
+            <button class="clear-search" (click)="searchQuery=''; loadProducts()">✕</button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container page-body">
+    <!-- Sidebar + Products -->
+    <div class="layout">
+      <!-- Filters Sidebar -->
+      <aside class="sidebar animate-fadeInUp" style="animation-delay:0.1s">
+        <div class="sidebar-card card">
+          <div class="sidebar-header">
+            <h3>Filters</h3>
+            @if (hasFilters()) {
+              <button class="clear-btn" (click)="clearFilters()">Clear all</button>
+            }
+          </div>
+
+          <div class="filter-section">
+            <label class="filter-label">Category</label>
+            <select [(ngModel)]="selectedCategory" (change)="applyFilters()">
+              <option value="">All Categories</option>
+              @for (cat of categories; track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <label class="filter-label">Price Range</label>
+            <div class="price-inputs">
+              <input type="number" [(ngModel)]="minPrice" placeholder="Min $" (change)="applyFilters()" min="0"/>
+              <span>—</span>
+              <input type="number" [(ngModel)]="maxPrice" placeholder="Max $" (change)="applyFilters()" min="0"/>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <label class="filter-label">Min Rating</label>
+            <div class="rating-filter">
+              @for (r of [1,2,3,4,5]; track r) {
+                <button class="rating-btn" [class.active]="minRating === r"
+                        (click)="minRating = minRating === r ? null : r; applyFilters()">
+                  {{ r }}★
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <label class="filter-label">Sort By</label>
+            <select [(ngModel)]="sortBy" (change)="applyFilters()">
+              <option value="">Default</option>
+              <option value="price">Price</option>
+              <option value="name">Name</option>
+              <option value="rating">Rating</option>
+              <option value="createdAt">Newest</option>
+            </select>
+            @if (sortBy) {
+              <button class="sort-dir-btn" (click)="sortDescending = !sortDescending; applyFilters()">
+                {{ sortDescending ? '↓ Desc' : '↑ Asc' }}
+              </button>
+            }
+          </div>
+        </div>
+      </aside>
+
+      <!-- Products -->
+      <div class="products-area">
+        <!-- Top bar -->
+        <div class="top-bar animate-fadeInUp">
+          <p class="results-count">
+            @if (loading) { Loading... }
+            @else { <strong>{{ totalCount }}</strong> products found }
+          </p>
+          <div class="view-toggle">
+            <button [class.active]="viewMode === 'grid'" (click)="viewMode = 'grid'" title="Grid view">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+            <button [class.active]="viewMode === 'list'" (click)="viewMode = 'list'" title="List view">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        @if (loading) {
+          <div class="products-skeleton" [class.list-mode]="viewMode === 'list'">
+            @for (s of [1,2,3,4,5,6,7,8]; track s) {
+              <div class="skeleton-card">
+                <div class="skeleton" style="height:200px;border-radius:12px 12px 0 0"></div>
+                <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+                  <div class="skeleton" style="height:16px;width:70%"></div>
+                  <div class="skeleton" style="height:12px;width:50%"></div>
+                  <div class="skeleton" style="height:20px;width:30%"></div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else if (products.length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <h3>No products found</h3>
+            <p>Try adjusting your filters or search query</p>
+            <button class="btn btn-primary" (click)="clearFilters()" style="margin-top:16px">Clear Filters</button>
+          </div>
+        } @else {
+          <div [class]="viewMode === 'grid' ? 'products-grid' : 'products-list'">
+            @for (p of products; track p.id; let i = $index) {
+              <div class="product-card card" [style.animation-delay]="(i % 12 * 0.05) + 's'"
+                   [class.list-card]="viewMode === 'list'">
+                <a [routerLink]="['/products', p.id]" class="product-img-wrap">
+                  <img [src]="p.imageUrl || 'https://placehold.co/300x200/e8f0fe/1a6cf5?text=' + p.name"
+                       [alt]="p.name" class="product-img" loading="lazy"/>
+                  <div class="img-overlay">
+                    <span>View Details →</span>
+                  </div>
+                </a>
+                <div class="product-body">
+                  <div class="product-meta">
+                    <span class="badge badge-primary">{{ p.categoryName }}</span>
+                    <div class="product-rating">
+                      <span class="star-filled">★</span>
+                      <span>{{ p.averageRating | number:'1.1-1' }}</span>
+                      <span class="review-count">({{ p.reviewCount }})</span>
+                    </div>
+                  </div>
+                  <a [routerLink]="['/products', p.id]" class="product-title">{{ p.name }}</a>
+{{ p.description && p.description.length > 80 ? '...' : '' }}
+                  <div class="product-footer">
+                    <span class="product-price">${{ p.price | number:'1.2-2' }}</span>
+                    <div class="product-actions">
+                      @if (p.stock > 0) {
+                        @if (isLoggedIn) {
+                          <button class="btn btn-primary btn-sm add-cart-btn"
+                                  [class.success]="cartSuccess === p.id"
+                                  [disabled]="cartLoading === p.id"
+                                  (click)="addToCart(p)">
+                            @if (cartLoading === p.id) {
+                              <span class="spinner-sm"></span>
+                            } @else if (cartSuccess === p.id) {
+                              ✓ Added!
+                            } @else {
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                              </svg>
+                              Add to Cart
+                            }
+                          </button>
+                        } @else {
+                          <a routerLink="/auth/login" class="btn btn-outline btn-sm">Login to Buy</a>
+                        }
+                      } @else {
+                        <span class="out-of-stock">Out of stock</span>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+
+          <!-- Pagination -->
+          @if (totalPages > 1) {
+            <div class="pagination animate-fadeInUp">
+              <button (click)="setPage(1)" [disabled]="currentPage === 1">«</button>
+              <button (click)="setPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+              @for (p of pages; track p) {
+                <button [class.active]="p === currentPage" (click)="setPage(p)">{{ p }}</button>
+              }
+              <button (click)="setPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+              <button (click)="setPage(totalPages)" [disabled]="currentPage === totalPages">»</button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </div>
+</div>

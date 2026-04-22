@@ -1,0 +1,84 @@
+<nav class="navbar" [class.scrolled]="scrolled">
+  <div class="nav-container">
+    <!-- Logo -->
+    <a routerLink="/products" class="logo">
+      <div class="logo-icon">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+          <rect width="28" height="28" rx="8" fill="white" fill-opacity="0.15"/>
+          <path d="M6 8h16M6 14h10M6 20h13" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="21" cy="20" r="4" fill="white" fill-opacity="0.9"/>
+        </svg>
+      </div>
+      <span class="logo-text">STEP<span class="logo-accent">Shop</span></span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <div class="nav-links">
+      @if (!isAdmin) {
+        <a routerLink="/products" routerLinkActive="active" class="nav-link">Products</a>
+      }
+      @if (isAdmin) {
+        <a routerLink="/admin/dashboard" routerLinkActive="active" class="nav-link">Dashboard</a>
+        <a routerLink="/admin/products" routerLinkActive="active" class="nav-link">Products</a>
+        <a routerLink="/admin/categories" routerLinkActive="active" class="nav-link">Categories</a>
+      }
+    </div>
+
+    <!-- Actions -->
+    <div class="nav-actions">
+      @if (!isLoggedIn) {
+        <a routerLink="/auth/login" class="btn btn-ghost btn-sm">Login</a>
+        <a routerLink="/auth/register" class="btn btn-primary btn-sm">Register</a>
+      } @else if (!isAdmin) {
+        <a routerLink="/cart" class="cart-btn" title="Cart">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+          </svg>
+          @if (cartCount > 0) {
+            <span class="cart-badge">{{ cartCount }}</span>
+          }
+        </a>
+        <a routerLink="/profile" class="avatar-btn" title="Profile">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">Logout</button>
+      } @else {
+        <span class="admin-badge">Admin</span>
+        <button class="btn btn-ghost btn-sm" (click)="logout()">Logout</button>
+      }
+
+      <!-- Hamburger -->
+      <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  @if (menuOpen) {
+    <div class="mobile-menu animate-fadeInUp">
+      @if (!isAdmin) {
+        <a routerLink="/products" (click)="menuOpen=false" class="mobile-link">Products</a>
+      }
+      @if (isAdmin) {
+        <a routerLink="/admin/dashboard" (click)="menuOpen=false" class="mobile-link">Dashboard</a>
+        <a routerLink="/admin/products" (click)="menuOpen=false" class="mobile-link">Products</a>
+        <a routerLink="/admin/categories" (click)="menuOpen=false" class="mobile-link">Categories</a>
+      }
+      @if (!isLoggedIn) {
+        <a routerLink="/auth/login" (click)="menuOpen=false" class="mobile-link">Login</a>
+        <a routerLink="/auth/register" (click)="menuOpen=false" class="mobile-link accent">Register</a>
+      } @else if (!isAdmin) {
+        <a routerLink="/cart" (click)="menuOpen=false" class="mobile-link">Cart ({{ cartCount }})</a>
+        <a routerLink="/profile" (click)="menuOpen=false" class="mobile-link">Profile</a>
+        <button (click)="logout()" class="mobile-link danger">Logout</button>
+      } @else {
+        <button (click)="logout()" class="mobile-link danger">Logout</button>
+      }
+    </div>
+  }
+</nav>
