@@ -20,6 +20,10 @@ export class AuthService {
   private _isAdmin$ = new BehaviorSubject<boolean>(this.isAdminStored());
   isAdmin$ = this._isAdmin$.asObservable();
 
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined';
+  }
+
   // ---- USER AUTH ----
   register(data: RegisterRequest): Observable<any> {
     return this.http.post(`${this.api}/auth/register`, data);
@@ -60,33 +64,33 @@ export class AuthService {
 
   // ---- TOKEN MANAGEMENT ----
   saveTokens(res: AuthResponse, isAdmin: boolean): void {
-    localStorage.setItem('accessToken', res.accessToken);
-    localStorage.setItem('refreshToken', res.refreshToken);
-    localStorage.setItem('tokenType', res.tokenType || 'Bearer');
-    localStorage.setItem('expiresIn', String(res.expiresIn));
-    localStorage.setItem('isAdmin', String(isAdmin));
+    if (this.isBrowser()) {
+      localStorage.setItem('accessToken', res.data.accessToken);
+      localStorage.setItem('refreshToken', res.data.refreshToken);
+      localStorage.setItem('isAdmin', String(isAdmin));
+    }
     this._isLoggedIn$.next(true);
     this._isAdmin$.next(isAdmin);
   }
 
   getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
+    return this.isBrowser() ? localStorage.getItem('accessToken') : null;
   }
 
   hasToken(): boolean {
-    return !!localStorage.getItem('accessToken');
+    return this.isBrowser() ? !!localStorage.getItem('accessToken') : false;
   }
 
   isAdminStored(): boolean {
-    return localStorage.getItem('isAdmin') === 'true';
+    return this.isBrowser() ? localStorage.getItem('isAdmin') === 'true' : false;
   }
 
   logout(): void {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('tokenType');
-    localStorage.removeItem('expiresIn');
-    localStorage.removeItem('isAdmin');
+    if (this.isBrowser()) {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isAdmin');
+    }
     this._isLoggedIn$.next(false);
     this._isAdmin$.next(false);
     this.router.navigate(['/auth/login']);

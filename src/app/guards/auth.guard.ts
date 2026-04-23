@@ -1,9 +1,11 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
+const isBrowser = () => typeof window !== 'undefined';
+
 export const authGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const token = localStorage.getItem('accessToken');
+  const token = isBrowser() ? localStorage.getItem('accessToken') : null;
   if (!token) {
     router.navigate(['/auth/login']);
     return false;
@@ -13,9 +15,8 @@ export const authGuard: CanActivateFn = () => {
 
 export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const token = localStorage.getItem('accessToken');
-  const isAdmin = localStorage.getItem('isAdmin') === 'true';
-  if (!token || !isAdmin) {
+  const token = isBrowser() ? localStorage.getItem('accessToken') : null;
+  if (!token) {
     router.navigate(['/admin/login']);
     return false;
   }
@@ -24,10 +25,9 @@ export const adminGuard: CanActivateFn = () => {
 
 export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const token = localStorage.getItem('accessToken');
+  const token = isBrowser() ? localStorage.getItem('accessToken') : null;
   if (token) {
-    const isAdmin = localStorage.getItem('isAdmin') === 'true';
-    router.navigate([isAdmin ? '/admin/dashboard' : '/products']);
+    router.navigate(['/products']);
     return false;
   }
   return true;

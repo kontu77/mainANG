@@ -22,10 +22,11 @@ export interface AdminRequest {
 }
 
 export interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+  };
+  meta?: any;
 }
 
 export interface VerifyEmailRequest {

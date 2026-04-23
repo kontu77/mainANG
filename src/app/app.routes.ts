@@ -4,7 +4,6 @@ import { authGuard, adminGuard, guestGuard } from './guards/auth.guard';
 export const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
 
-  // Auth routes (user)
   {
     path: 'auth',
     children: [
@@ -33,7 +32,6 @@ export const routes: Routes = [
     ]
   },
 
-  // Admin auth routes
   {
     path: 'admin',
     children: [
@@ -65,8 +63,6 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
-
-  // Shop routes
   {
     path: 'products',
     loadComponent: () => import('./features/products/product-list/product-list.component').then(m => m.ProductListComponent)
@@ -86,5 +82,5 @@ export const routes: Routes = [
     loadComponent: () => import('./features/user/profile/profile.component').then(m => m.ProfileComponent)
   },
 
-  { path: '**', redirectTo: '/products' }
+  { path: '**', loadComponent: () => import('./features/error/error.component').then(m => m.ErrorComponent) }
 ];
