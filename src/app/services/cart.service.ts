@@ -14,7 +14,10 @@ export class CartService {
 
   getCart(): Observable<CartItemResponsePaged> {
     return this.http.get<CartItemResponsePaged>(`${this.api}/cart`).pipe(
-      tap(res => this._cartCount$.next(res.items?.length || 0))
+      tap((res: any) => {
+        const data = res.data || res;
+        this._cartCount$.next(data.items?.length || 0);
+      })
     );
   }
 

@@ -24,25 +24,33 @@ export class CartComponent implements OnInit {
   error = '';
 
   ngOnInit() { this.loadCart(); }
-
   loadCart() {
-  this.loading = true;
-  this.cartService.getCart().subscribe({
-    next: (res: any) => {
-      const data = res.data || res;
-      this.items = data.items || [];
-      this.totalPrice = data.totalPrice || 0;
-      this.loading = false;
-    },
-    error: () => this.loading = false
-  });
-}
+    this.loading = true;
+    this.cartService.getCart().subscribe({
+      next: (res: any) => {
+        const data = res.data || res;
+        const rawItems = data.items || [];
+        this.items = rawItems.map((item: any) => ({
+          id: item.id,
+          productId: item.product.id,
+          productName: item.product.name,
+          productImageUrl: item.product.imageUrl,
+          price: item.price,
+          quantity: item.quantity,
+          totalPrice: item.totalPrice
+        }));
+        this.totalPrice = data.totalPrice || this.items.reduce((s, i) => s + i.totalPrice, 0);
+        this.loading = false;
+      },
+      error: () => this.loading = false
+    });
+  }
 
   updateQuantity(item: CartItemResponse, delta: number) {
     const newQty = item.quantity + delta;
     if (newQty < 1) return;
-    this.updating = item.productId;
-    this.cartService.editQuantity({ productId: item.productId, quantity: newQty }).subscribe({
+    this.updating = item.id;
+    this.cartService.editQuantity({ itemId: item.id, quantity: newQty }).subscribe({
       next: () => {
         item.quantity = newQty;
         item.totalPrice = item.price * newQty;
@@ -53,11 +61,12 @@ export class CartComponent implements OnInit {
     });
   }
 
-  removeItem(productId: number) {
-    this.removing = productId;
-    this.cartService.removeFromCart(productId).subscribe({
+  removeItem(item: CartItemResponse) {
+    this.removing = item.id;
+    // item.id = cart item id, გავგზავნოთ როგორც "productId" path parameter-ში
+    this.cartService.removeFromCart(item.id).subscribe({
       next: () => {
-        this.items = this.items.filter(i => i.productId !== productId);
+        this.items = this.items.filter(i => i.id !== item.id);
         this.totalPrice = this.items.reduce((s, i) => s + i.totalPrice, 0);
         this.removing = null;
       },

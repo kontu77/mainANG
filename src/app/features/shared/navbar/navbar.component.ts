@@ -28,12 +28,14 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.isLoggedIn$.subscribe(v => this.isLoggedIn = v);
+    this.authService.isLoggedIn$.subscribe(v => {
+      this.isLoggedIn = v;
+      if (v && !this.isAdmin) {
+        this.cartService.getCart().subscribe();
+      }
+    });
     this.authService.isAdmin$.subscribe(v => this.isAdmin = v);
     this.cartService.cartCount$.subscribe(v => this.cartCount = v);
-    if (this.isLoggedIn && !this.isAdmin) {
-      this.cartService.getCart().subscribe();
-    }
   }
 
   logout() {

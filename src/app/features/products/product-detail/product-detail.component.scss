@@ -157,6 +157,9 @@
 
   svg { color: var(--primary); }
 }
+textarea {
+  color: #000 !important; // ← დაამატე დროებით
+}
 
 /* Tabs */
 .tabs-section { margin-top: 8px; }

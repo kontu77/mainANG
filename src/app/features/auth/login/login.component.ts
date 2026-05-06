@@ -32,7 +32,10 @@ export class LoginComponent {
     this.loading = true;
     this.error = '';
     this.authService.login(this.form.value as any).subscribe({
-      next: () => this.router.navigate(['/products']),
+      next: () => {
+        const email = this.form.value.email;
+        this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
+      },
       error: (e) => {
         this.error = e.error?.message || 'Login failed. Please try again.';
         this.loading = false;

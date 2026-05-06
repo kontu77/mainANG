@@ -24,7 +24,7 @@ export class AuthService {
     return typeof window !== 'undefined';
   }
 
-  // ---- USER AUTH ----
+
   register(data: RegisterRequest): Observable<any> {
     return this.http.post(`${this.api}/auth/register`, data);
   }

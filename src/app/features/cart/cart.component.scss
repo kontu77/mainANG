@@ -51,7 +51,7 @@
   animation: fadeInUp 0.35s ease both;
   transition: background 0.2s;
 
-  &:hover { background: var(--off-white); border-radius: var(--radius-sm); padding-left: 12px; padding-right: 12px; }
+  // &:hover { background: var(--off-white); border-radius: var(--radius-sm); padding-left: 12px; padding-right: 12px; }
 
   @media (max-width: 600px) { flex-wrap: wrap; }
 }

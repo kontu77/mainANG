@@ -26,7 +26,6 @@
   </div>
 
   <div class="container page-body">
-    <!-- Sidebar + Products -->
     <div class="layout">
       <!-- Filters Sidebar -->
       <aside class="sidebar animate-fadeInUp" style="animation-delay:0.1s">
@@ -148,13 +147,14 @@
                   <div class="product-meta">
                     <span class="badge badge-primary">{{ p.categoryName }}</span>
                     <div class="product-rating">
-                      <span class="star-filled">★</span>
-                      <span>{{ p.averageRating | number:'1.1-1' }}</span>
+                      @for (star of getStars(p.averageRating); track $index) {
+                        <span [class]="star === '★' ? 'star-filled' : 'star-empty'">{{ star }}</span>
+                      }
                       <span class="review-count">({{ p.reviewCount }})</span>
                     </div>
                   </div>
                   <a [routerLink]="['/products', p.id]" class="product-title">{{ p.name }}</a>
-{{ p.description && p.description.length > 80 ? '...' : '' }}
+                  <p class="product-desc">{{ p.description && p.description.length > 80 ? (p.description | slice:0:80) + '...' : p.description }}</p>
                   <div class="product-footer">
                     <span class="product-price">${{ p.price | number:'1.2-2' }}</span>
                     <div class="product-actions">

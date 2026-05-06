@@ -31,7 +31,7 @@ export interface AuthResponse {
 
 export interface VerifyEmailRequest {
   email: string;
-  token: string;
+  code: string;
 }
 
 export interface ResetPasswordRequest {
@@ -41,7 +41,6 @@ export interface ResetPasswordRequest {
   confirmNewPassword: string;
 }
 
-// Product models
 export interface ProductResponse {
   id: number;
   name: string;
@@ -49,11 +48,17 @@ export interface ProductResponse {
   price: number;
   stock: number;
   imageUrl: string;
-  categoryId: number;
+  imageUrls?: string[];
+  categoryId?: number;
   categoryName: string;
+  category?: { id: number; name: string };
   averageRating: number;
+  rating?: number;
   reviewCount: number;
   createdAt: string;
+  brand?: string;
+  model?: string;
+  specifications?: any;
 }
 
 export interface ProductDetailedResponse extends ProductResponse {
@@ -69,6 +74,7 @@ export interface ProductResponsePaged {
     totalPages: number;
   };
 }
+
 export interface CreateProductRequest {
   name: string;
   description: string;
@@ -105,12 +111,16 @@ export interface UpdateCategoryRequest {
   description?: string;
 }
 
-// Review models
 export interface ReviewResponse {
   id: number;
   productId: number;
   userId: number;
   userName: string;
+  user?: {
+    firstName: string;
+    lastName: string;
+    email: string;
+  };
   rating: number;
   comment: string;
   createdAt: string;
@@ -126,13 +136,13 @@ export interface ReviewResponsePaged {
 
 export interface CreateReviewRequest {
   productId: number;
-  rating: number;
+  rate: number;
   comment: string;
 }
 
 export interface EditReviewRequest {
   reviewId: number;
-  rating: number;
+  rate: number;
   comment: string;
 }
 
@@ -159,7 +169,7 @@ export interface AddToCartRequest {
 }
 
 export interface EditCartItemRequest {
-  productId: number;
+  itemId: number;  // ← სწორი
   quantity: number;
 }
 

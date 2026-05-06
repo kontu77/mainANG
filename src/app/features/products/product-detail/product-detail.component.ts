@@ -22,6 +22,7 @@ export class ProductDetailComponent implements OnInit {
   private reviewService = inject(ReviewService);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
+
   product: ProductDetailedResponse | null = null;
   reviews: ReviewResponse[] = [];
   loading = true;
@@ -43,15 +44,31 @@ export class ProductDetailComponent implements OnInit {
   ngOnInit() {
     this.authService.isLoggedIn$.subscribe(v => this.isLoggedIn = v);
     const id = +this.route.snapshot.paramMap.get('id')!;
+
     this.productService.getProductById(id).subscribe({
-  next: (res: any) => {
-    const p = res.data || res;
-    this.product = p;
-    this.reviews = p.reviews || [];
-    this.loading = false;
-  },
-  error: () => this.loading = false
-});
+      next: (res: any) => {
+        const p = res?.data ?? res;
+        this.product = {
+          ...p,
+          averageRating: p.rating ?? 0,
+          reviewCount: p.reviewCount ?? 0,
+          categoryName: p.category?.name ?? ''
+        };
+        this.loading = false;
+        this.loadReviews(id);
+      },
+      error: () => this.loading = false
+    });
+  }
+
+  loadReviews(id: number) {
+    this.reviewService.getReviews(id).subscribe({
+      next: (r: any) => {
+        const d = r?.data ?? r;
+        this.reviews = d?.items ?? d ?? [];
+      },
+      error: () => {}
+    });
   }
 
   addToCart() {
@@ -69,13 +86,14 @@ export class ProductDetailComponent implements OnInit {
 
   submitReview() {
     if (this.reviewForm.invalid || !this.product) return;
+
     this.reviewSaving = true;
     this.reviewError = '';
     const data = this.reviewForm.value;
 
     const obs = this.editingReview
-      ? this.reviewService.editReview({ reviewId: this.editingReview.id, rating: data.rating!, comment: data.comment! })
-      : this.reviewService.createReview({ productId: this.product.id, rating: data.rating!, comment: data.comment! });
+      ? this.reviewService.editReview({ reviewId: this.editingReview.id, rate: data.rating!, comment: data.comment! })
+      : this.reviewService.createReview({ productId: this.product.id, rate: data.rating!, comment: data.comment! });
 
     obs.subscribe({
       next: () => {
@@ -83,18 +101,11 @@ export class ProductDetailComponent implements OnInit {
         this.reviewSaving = false;
         this.editingReview = null;
         this.reviewForm.reset({ rating: 5, comment: '' });
-
-       this.reviewService.getReviews(this.product!.id).subscribe({
-       next: (res: any) => { 
-       const data = res.data || res;
-       this.reviews = data.items || []; 
-  },
-  error: () => {}
-});
+        this.loadReviews(this.product!.id);
         setTimeout(() => this.reviewSuccess = '', 3000);
       },
       error: (e) => {
-        this.reviewError = e.error?.message || 'Failed to submit review.';
+        this.reviewError = e.error?.detail || e.error?.message || 'Failed to submit review.';
         this.reviewSaving = false;
       }
     });
@@ -107,11 +118,11 @@ export class ProductDetailComponent implements OnInit {
     window.scrollTo({ top: 600, behavior: 'smooth' });
   }
 
-  deleteReview(productId: number) {
+  deleteReview(reviewId: number) {
     if (!confirm('Delete this review?')) return;
-    this.reviewService.deleteReview(productId).subscribe({
+    this.reviewService.deleteReview(reviewId).subscribe({
       next: () => {
-        this.reviews = this.reviews.filter(r => r.productId !== productId);
+        this.reviews = this.reviews.filter(r => r.id !== reviewId);
         this.reviewSuccess = 'Review deleted.';
         setTimeout(() => this.reviewSuccess = '', 2000);
       },
@@ -120,7 +131,7 @@ export class ProductDetailComponent implements OnInit {
   }
 
   getStars(rating: number): boolean[] {
-    return Array.from({ length: 5 }, (_, i) => i < rating);
+    return Array.from({ length: 5 }, (_, i) => i < Math.round(rating));
   }
 
   setRating(r: number) { this.reviewForm.patchValue({ rating: r }); }

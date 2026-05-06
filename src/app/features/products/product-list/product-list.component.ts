@@ -28,13 +28,11 @@ export class ProductListComponent implements OnInit {
   cartSuccess: number | null = null;
   isLoggedIn = false;
 
-  // Pagination
   currentPage = 1;
   pageSize = 12;
   totalPages = 1;
   totalCount = 0;
 
-  // Filters
   searchQuery = '';
   selectedCategory = '';
   minPrice: number | null = null;
@@ -87,7 +85,11 @@ export class ProductListComponent implements OnInit {
   }
 
 handleResponse(res: any) {
-  this.products = res.data.items || [];
+  this.products = (res.data.items || []).map((p: any) => ({
+    ...p,
+    averageRating: p.rating || 0,
+    reviewCount: p.reviewCount || 0
+  }));
   this.totalCount = res.data.totalCount || 0;
   this.totalPages = res.data.totalPages || 1;
   this.loading = false;
