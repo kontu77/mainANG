@@ -33,8 +33,7 @@ export class LoginComponent {
     this.error = '';
     this.authService.login(this.form.value as any).subscribe({
       next: () => {
-        const email = this.form.value.email;
-        this.router.navigate(['/auth/verify-email'], { queryParams: { email } });
+        this.router.navigate(['/products']);
       },
       error: (e) => {
         this.error = e.error?.message || 'Login failed. Please try again.';

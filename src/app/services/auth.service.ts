@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import {
   LoginRequest, RegisterRequest, AdminRequest,
-  AuthResponse, VerifyEmailRequest, ResetPasswordRequest
+  AuthResponse, ResetPasswordRequest
 } from '../models/models';
 
 @Injectable({ providedIn: 'root' })
@@ -24,7 +24,6 @@ export class AuthService {
     return typeof window !== 'undefined';
   }
 
-
   register(data: RegisterRequest): Observable<any> {
     return this.http.post(`${this.api}/auth/register`, data);
   }
@@ -37,14 +36,6 @@ export class AuthService {
 
   forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.api}/auth/forget-password/${email}`, {});
-  }
-
-  resendEmailVerification(email: string): Observable<any> {
-    return this.http.post(`${this.api}/auth/resend-email-verification/${email}`, {});
-  }
-
-  verifyEmail(data: VerifyEmailRequest): Observable<any> {
-    return this.http.put(`${this.api}/auth/verify-email`, data);
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<any> {
