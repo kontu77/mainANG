@@ -7,7 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-verify-email',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, RouterLink],
+imports: [ReactiveFormsModule, CommonModule],
   template: `
     <div class="auth-page">
       <div class="auth-bg"><div class="bg-circle c1"></div></div>

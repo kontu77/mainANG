@@ -81,7 +81,7 @@
           <div class="summary-lines">
             @for (item of items; track item.id) {
               <div class="summary-line">
-                <span>{{ (item.productName || '') | slice:0:24 }}{{ (item.productName?.length ?? 0) > 24 ? '...' : '' }} ×{{ item.quantity }}</span>
+               {{ item.productName.length > 24 ? '...' : '' }}
                 <span>${{ item.totalPrice | number:'1.2-2' }}</span>
               </div>
             }

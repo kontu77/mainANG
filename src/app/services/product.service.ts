@@ -14,8 +14,8 @@ export class ProductService {
 
   getProducts(page = 1, pageSize = 12): Observable<ProductResponsePaged> {
     const params = new HttpParams()
-      .set('pageNumber', page)
-      .set('pageSize', pageSize);
+      .set('Page', page)
+      .set('Take', pageSize);
     return this.http.get<ProductResponsePaged>(`${this.api}/products`, { params });
   }
 
@@ -26,21 +26,21 @@ export class ProductService {
   searchProducts(query: string, page = 1, pageSize = 12): Observable<ProductResponsePaged> {
     const params = new HttpParams()
       .set('query', query)
-      .set('pageNumber', page)
-      .set('pageSize', pageSize);
+      .set('Page', page)
+      .set('Take', pageSize);
     return this.http.get<ProductResponsePaged>(`${this.api}/products/search`, { params });
   }
 
   filterProducts(filters: ProductFilterParams): Observable<ProductResponsePaged> {
-    let params = new HttpParams();
-    if (filters.categoryId) params = params.set('categoryId', filters.categoryId);
-    if (filters.minPrice !== undefined) params = params.set('minPrice', filters.minPrice);
-    if (filters.maxPrice !== undefined) params = params.set('maxPrice', filters.maxPrice);
-    if (filters.minRating !== undefined) params = params.set('minRating', filters.minRating);
-    if (filters.pageNumber) params = params.set('pageNumber', filters.pageNumber);
-    if (filters.pageSize) params = params.set('pageSize', filters.pageSize || 12);
-    if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
-    if (filters.sortDescending !== undefined) params = params.set('sortDescending', filters.sortDescending);
+    let params = new HttpParams()
+      .set('Page', filters.pageNumber ?? 1)
+      .set('Take', filters.pageSize ?? 12);
+    if (filters.categoryId) params = params.set('CategoryId', filters.categoryId);
+    if (filters.minPrice !== undefined && filters.minPrice !== null) params = params.set('MinPrice', filters.minPrice);
+    if (filters.maxPrice !== undefined && filters.maxPrice !== null) params = params.set('MaxPrice', filters.maxPrice);
+    if (filters.minRating !== undefined && filters.minRating !== null) params = params.set('MinRating', filters.minRating);
+    if (filters.sortBy) params = params.set('SortBy', filters.sortBy);
+    if (filters.sortDescending !== undefined) params = params.set('SortDescending', filters.sortDescending);
     return this.http.get<ProductResponsePaged>(`${this.api}/products/filter`, { params });
   }
 

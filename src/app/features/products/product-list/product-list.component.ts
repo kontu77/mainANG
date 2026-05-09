@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import { ProductService } from '../../../services/product.service';
 import { CategoryService } from '../../../services/category.service';
 import { CartService } from '../../../services/cart.service';
@@ -42,9 +43,15 @@ export class ProductListComponent implements OnInit {
   sortDescending = false;
   viewMode: 'grid' | 'list' = 'grid';
 
+  private searchSubject = new Subject<string>();
+
   ngOnInit() {
     this.authService.isLoggedIn$.subscribe(v => this.isLoggedIn = v);
     this.categoryService.getCategories().subscribe({ next: (res: any) => this.categories = res.data || res, error: () => {} });
+    this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe(() => {
+      this.currentPage = 1;
+      this.loadProducts();
+    });
     this.loadProducts();
   }
 
@@ -85,21 +92,24 @@ export class ProductListComponent implements OnInit {
   }
 
   handleResponse(res: any) {
-    console.log('FIRST PRODUCT:', res.data.items?.[0]);
-    this.products = (res.data.items || []).map((p: any) => ({
+    const data = res.data || res;
+    this.products = (data.items || []).map((p: any) => ({
       ...p,
       averageRating: p.rating ?? p.averageRating ?? 0,
-      reviewCount: p.reviewCount ?? p.reviewsCount ?? p.totalReviewCount ?? 0
+      reviewCount: p.reviewCount ?? p.reviewsCount ?? p.totalReviewCount ?? 0,
+      categoryName: p.category?.name ?? p.categoryName ?? ''
     }));
-    this.totalCount = res.data.totalCount || 0;
-    this.totalPages = res.data.totalPages || 1;
+    this.totalCount = data.totalCount || 0;
+    this.totalPages = data.totalPages || 1;
+    if (data.currentPage) {
+      this.currentPage = data.currentPage;
+    }
     this.loading = false;
   }
 
   onSearch(e: Event) {
     this.searchQuery = (e.target as HTMLInputElement).value;
-    this.currentPage = 1;
-    this.loadProducts();
+    this.searchSubject.next(this.searchQuery);
   }
 
   applyFilters() {

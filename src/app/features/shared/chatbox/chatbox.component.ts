@@ -1,9 +1,11 @@
-import { Component, AfterViewChecked, ElementRef, ViewChild } from '@angular/core';
+import { Component, AfterViewChecked, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { AuthService } from '../../../services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 interface Message {
   role: 'user' | 'bot';
@@ -18,9 +20,10 @@ interface Message {
   templateUrl: './chatbox.component.html',
   styleUrl: './chatbox.component.css'
 })
-export class ChatboxComponent implements AfterViewChecked {
+export class ChatboxComponent implements AfterViewChecked, OnInit {
   private http = inject(HttpClient);
   private sanitizer = inject(DomSanitizer);
+  private authService = inject(AuthService);
 
   @ViewChild('messagesContainer') private messagesContainer!: ElementRef;
 
@@ -28,15 +31,37 @@ export class ChatboxComponent implements AfterViewChecked {
   inputText = '';
   loading = false;
   sessionId = crypto.randomUUID();
-  messages: Message[] = [
-    { role: 'bot', text: 'გამარჯობა! 👋 როგორ შეგვიძლია დაგეხმაროთ?' }
-  ];
+  messages: Message[] = [];
 
   private webhookUrl = 'https://kontu.app.n8n.cloud/webhook/7f0821d6-b0d5-4028-905d-915031514b34/chat';
+
+  ngOnInit() {
+    const token = this.authService.getAccessToken();
+    if (token) {
+      this.http.get<any>(`${environment.apiUrl}/users/me`).subscribe({
+        next: (res) => {
+          const user = res.data || res;
+          const firstName = user.firstName || '';
+          this.setGreeting(firstName);
+        },
+        error: () => this.setGreeting('')
+      });
+    } else {
+      this.setGreeting('');
+    }
+  }
+
+  private setGreeting(firstName: string) {
+    const greeting = firstName
+      ? `გამარჯობა, ${firstName}! 👋 რით შემიძლია დაგეხმაროთ?`
+      : 'გამარჯობა! 👋 რით შემიძლია დაგეხმაროთ?';
+    this.messages = [{ role: 'bot', text: greeting }];
+  }
 
   ngAfterViewChecked() {
     this.scrollToBottom();
   }
+
   private scrollToBottom(): void {
     try {
       if (this.messagesContainer) {
@@ -85,3 +110,4 @@ export class ChatboxComponent implements AfterViewChecked {
     }
   }
 }
+
