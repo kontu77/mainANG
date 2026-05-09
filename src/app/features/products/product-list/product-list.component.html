@@ -150,7 +150,9 @@
                       @for (star of getStars(p.averageRating); track $index) {
                         <span [class]="star === '★' ? 'star-filled' : 'star-empty'">{{ star }}</span>
                       }
-                      <span class="review-count">({{ p.reviewCount }})</span>
+                      @if (p.reviewCount) {
+  <span class="review-count">({{ p.reviewCount }})</span>
+}
                     </div>
                   </div>
                   <a [routerLink]="['/products', p.id]" class="product-title">{{ p.name }}</a>

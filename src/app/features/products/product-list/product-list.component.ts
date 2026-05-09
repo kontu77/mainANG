@@ -49,51 +49,52 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts() {
-  this.loading = true;
-  this.products = [];
+    this.loading = true;
+    this.products = [];
 
-  if (this.searchQuery.trim()) {
-    this.productService.searchProducts(this.searchQuery, this.currentPage, this.pageSize).subscribe({
-      next: res => this.handleResponse(res),
-      error: () => this.loading = false
-    });
-  } else if (this.hasFilters()) {
-    const filters: ProductFilterParams = {
-      pageNumber: this.currentPage,
-      pageSize: this.pageSize
-    };
-    if (this.selectedCategory) filters.categoryId = +this.selectedCategory;
-    if (this.minPrice !== null) filters.minPrice = this.minPrice;
-    if (this.maxPrice !== null) filters.maxPrice = this.maxPrice;
-    if (this.minRating !== null) filters.minRating = this.minRating;
-    if (this.sortBy) { filters.sortBy = this.sortBy; filters.sortDescending = this.sortDescending; }
+    if (this.searchQuery.trim()) {
+      this.productService.searchProducts(this.searchQuery, this.currentPage, this.pageSize).subscribe({
+        next: res => this.handleResponse(res),
+        error: () => this.loading = false
+      });
+    } else if (this.hasFilters()) {
+      const filters: ProductFilterParams = {
+        pageNumber: this.currentPage,
+        pageSize: this.pageSize
+      };
+      if (this.selectedCategory) filters.categoryId = +this.selectedCategory;
+      if (this.minPrice !== null) filters.minPrice = this.minPrice;
+      if (this.maxPrice !== null) filters.maxPrice = this.maxPrice;
+      if (this.minRating !== null) filters.minRating = this.minRating;
+      if (this.sortBy) { filters.sortBy = this.sortBy; filters.sortDescending = this.sortDescending; }
 
-    this.productService.filterProducts(filters).subscribe({
-      next: res => this.handleResponse(res),
-      error: () => this.loading = false
-    });
-  } else {
-    this.productService.getProducts(this.currentPage, this.pageSize).subscribe({
-      next: res => this.handleResponse(res),
-      error: () => this.loading = false
-    });
+      this.productService.filterProducts(filters).subscribe({
+        next: res => this.handleResponse(res),
+        error: () => this.loading = false
+      });
+    } else {
+      this.productService.getProducts(this.currentPage, this.pageSize).subscribe({
+        next: res => this.handleResponse(res),
+        error: () => this.loading = false
+      });
+    }
   }
-}
 
   hasFilters(): boolean {
     return !!(this.selectedCategory || this.minPrice !== null || this.maxPrice !== null || this.minRating !== null || this.sortBy);
   }
 
-handleResponse(res: any) {
-  this.products = (res.data.items || []).map((p: any) => ({
-    ...p,
-    averageRating: p.rating || 0,
-    reviewCount: p.reviewCount || 0
-  }));
-  this.totalCount = res.data.totalCount || 0;
-  this.totalPages = res.data.totalPages || 1;
-  this.loading = false;
-}
+  handleResponse(res: any) {
+    console.log('FIRST PRODUCT:', res.data.items?.[0]);
+    this.products = (res.data.items || []).map((p: any) => ({
+      ...p,
+      averageRating: p.rating ?? p.averageRating ?? 0,
+      reviewCount: p.reviewCount ?? p.reviewsCount ?? p.totalReviewCount ?? 0
+    }));
+    this.totalCount = res.data.totalCount || 0;
+    this.totalPages = res.data.totalPages || 1;
+    this.loading = false;
+  }
 
   onSearch(e: Event) {
     this.searchQuery = (e.target as HTMLInputElement).value;

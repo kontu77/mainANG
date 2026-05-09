@@ -29,6 +29,7 @@ export class ProductDetailComponent implements OnInit {
   cartLoading = false;
   cartSuccess = false;
   isLoggedIn = false;
+  currentUserId: number | null = null;
   quantity = 1;
   activeTab: 'description' | 'reviews' = 'description';
   editingReview: ReviewResponse | null = null;
@@ -41,9 +42,24 @@ export class ProductDetailComponent implements OnInit {
     comment: ['', [Validators.required, Validators.minLength(5)]]
   });
 
-  ngOnInit() {
-    this.authService.isLoggedIn$.subscribe(v => this.isLoggedIn = v);
-    const id = +this.route.snapshot.paramMap.get('id')!;
+ ngOnInit() {
+  this.authService.isLoggedIn$.subscribe(v => this.isLoggedIn = v);
+
+  // token პირდაპირ წაიკითხე
+  const token = this.authService.getAccessToken();
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      console.log('FULL PAYLOAD:', JSON.stringify(payload));
+      const nameId = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+      this.currentUserId = Number(nameId) || null;
+      console.log('currentUserId:', this.currentUserId);
+    } catch {
+      this.currentUserId = null;
+    }
+  }
+
+  const id = +this.route.snapshot.paramMap.get('id')!;
 
     this.productService.getProductById(id).subscribe({
       next: (res: any) => {
@@ -61,16 +77,18 @@ export class ProductDetailComponent implements OnInit {
     });
   }
 
-  loadReviews(id: number) {
-    this.reviewService.getReviews(id).subscribe({
-      next: (r: any) => {
-        const d = r?.data ?? r;
-        this.reviews = d?.items ?? d ?? [];
-      },
-      error: () => {}
-    });
-  }
-
+ loadReviews(id: number) {
+  this.reviewService.getReviews(id).subscribe({
+    next: (r: any) => {
+      const d = r?.data ?? r;
+      this.reviews = d?.items ?? d ?? [];
+      if (this.product) {
+        this.product = { ...this.product, reviewCount: this.reviews.length };
+      }
+    },
+    error: () => {}
+  });
+}
   addToCart() {
     if (!this.product || !this.isLoggedIn) return;
     this.cartLoading = true;

@@ -4,21 +4,10 @@
       <div class="spinner"></div>
     </div>
   } @else if (!product) {
-    <div
-      class="empty-state"
-      style="
-        min-height: 60vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      "
-    >
+    <div class="empty-state" style="min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <div class="empty-icon">😕</div>
       <h3>Product not found</h3>
-      <a routerLink="/products" class="btn btn-primary" style="margin-top: 16px"
-        >Back to Products</a
-      >
+      <a routerLink="/products" class="btn btn-primary" style="margin-top: 16px">Back to Products</a>
     </div>
   } @else {
     <div class="breadcrumb-bar">
@@ -39,11 +28,7 @@
         <div class="product-gallery">
           <div class="main-image">
             <img
-              [src]="
-                product.imageUrl ||
-                'https://placehold.co/600x500/e8f0fe/1a6cf5?text=' +
-                  product.name
-              "
+              [src]="product.imageUrl || 'https://placehold.co/600x500/e8f0fe/1a6cf5?text=' + product.name"
               [alt]="product.name"
             />
             @if (product.stock === 0) {
@@ -57,9 +42,7 @@
           <div class="product-badges">
             <span class="badge badge-primary">{{ product.categoryName }}</span>
             @if (product.stock > 0 && product.stock <= 5) {
-              <span class="badge badge-warning"
-                >Only {{ product.stock }} left!</span
-              >
+              <span class="badge badge-warning">Only {{ product.stock }} left!</span>
             }
             @if (product.stock === 0) {
               <span class="badge badge-danger">Out of Stock</span>
@@ -71,19 +54,11 @@
           <div class="rating-row">
             <div class="stars">
               @for (s of getStars(product.averageRating); track $index) {
-                <span
-                  [style.color]="s ? '#f59e0b' : '#e5e7eb'"
-                  style="font-size: 20px"
-                  >★</span
-                >
+                <span [style.color]="s ? '#f59e0b' : '#e5e7eb'" style="font-size: 20px">★</span>
               }
             </div>
-            <span class="rating-num">{{
-              product.averageRating | number: "1.1-1"
-            }}</span>
-            <span class="review-count"
-              >({{ product.reviewCount }} reviews)</span
-            >
+            <span class="rating-num">{{ product.averageRating | number: "1.1-1" }}</span>
+            <span class="review-count">({{ product.reviewCount }} reviews)</span>
           </div>
 
           <div class="price-block">
@@ -94,18 +69,9 @@
             <div class="quantity-row">
               <label>Quantity</label>
               <div class="qty-controls">
-                <button (click)="quantity = quantity > 1 ? quantity - 1 : 1">
-                  −
-                </button>
+                <button (click)="quantity = quantity > 1 ? quantity - 1 : 1">−</button>
                 <span>{{ quantity }}</span>
-                <button
-                  (click)="
-                    quantity =
-                      quantity < product.stock ? quantity + 1 : quantity
-                  "
-                >
-                  +
-                </button>
+                <button (click)="quantity = quantity < product.stock ? quantity + 1 : quantity">+</button>
               </div>
               <span class="stock-info">{{ product.stock }} available</span>
             </div>
@@ -113,13 +79,9 @@
 
           <div class="action-row">
             @if (!isLoggedIn) {
-              <a routerLink="/auth/login" class="btn btn-primary btn-lg"
-                >Login to Purchase</a
-              >
+              <a routerLink="/auth/login" class="btn btn-primary btn-lg">Login to Purchase</a>
             } @else if (product.stock === 0) {
-              <button class="btn btn-primary btn-lg" disabled>
-                Out of Stock
-              </button>
+              <button class="btn btn-primary btn-lg" disabled>Out of Stock</button>
             } @else {
               <button
                 class="btn btn-primary btn-lg add-to-cart"
@@ -132,19 +94,10 @@
                 } @else if (cartSuccess) {
                   ✓ Added to Cart!
                 } @else {
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="9" cy="21" r="1" />
                     <circle cx="20" cy="21" r="1" />
-                    <path
-                      d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"
-                    />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                   </svg>
                   Add {{ quantity }} to Cart
                 }
@@ -156,40 +109,19 @@
           <!-- Quick stats -->
           <div class="quick-stats">
             <div class="stat">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
               <span>Fast Delivery</span>
             </div>
             <div class="stat">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
               <span>Quality Assured</span>
             </div>
             <div class="stat">
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
               </svg>
               <span>Easy Returns</span>
@@ -201,16 +133,10 @@
       <!-- Tabs -->
       <div class="tabs-section animate-fadeInUp" style="animation-delay: 0.2s">
         <div class="tabs">
-          <button
-            [class.active]="activeTab === 'description'"
-            (click)="activeTab = 'description'"
-          >
+          <button [class.active]="activeTab === 'description'" (click)="activeTab = 'description'">
             Description
           </button>
-          <button
-            [class.active]="activeTab === 'reviews'"
-            (click)="activeTab = 'reviews'"
-          >
+          <button [class.active]="activeTab === 'reviews'" (click)="activeTab = 'reviews'">
             Reviews ({{ reviews.length }})
           </button>
         </div>
@@ -227,36 +153,14 @@
               <!-- Review Form -->
               @if (isLoggedIn) {
                 <div class="review-form-card card">
-                  <h3>
-                    {{ editingReview ? "Edit Review" : "Write a Review" }}
-                  </h3>
+                  <h3>{{ editingReview ? "Edit Review" : "Write a Review" }}</h3>
                   @if (reviewError) {
-                    <div
-                      class="alert-error"
-                      style="
-                        margin: 10px 0;
-                        padding: 10px;
-                        border-radius: 8px;
-                        background: #fee2e2;
-                        color: #dc2626;
-                        font-size: 14px;
-                      "
-                    >
+                    <div class="alert-error" style="margin: 10px 0; padding: 10px; border-radius: 8px; background: #fee2e2; color: #dc2626; font-size: 14px;">
                       {{ reviewError }}
                     </div>
                   }
                   @if (reviewSuccess) {
-                    <div
-                      class="alert-success"
-                      style="
-                        margin: 10px 0;
-                        padding: 10px;
-                        border-radius: 8px;
-                        background: #dcfce7;
-                        color: #16a34a;
-                        font-size: 14px;
-                      "
-                    >
+                    <div class="alert-success" style="margin: 10px 0; padding: 10px; border-radius: 8px; background: #dcfce7; color: #16a34a; font-size: 14px;">
                       {{ reviewSuccess }}
                     </div>
                   }
@@ -266,43 +170,22 @@
                         <button
                           type="button"
                           class="star-btn"
-                          [class.active]="
-                            (reviewForm.get('rating')?.value ?? 0) >= r
-                          "
+                          [class.active]="(reviewForm.get('rating')?.value ?? 0) >= r"
                           (click)="setRating(r)"
-                        >
-                          ★
-                        </button>
+                        >★</button>
                       }
                     </div>
                     <div class="form-group" style="margin-top: 16px">
                       <label>Your Review</label>
-                      <textarea
-                        formControlName="comment"
-                        placeholder="Share your experience with this product..."
-                        rows="4"
-                      ></textarea>
+                      <textarea formControlName="comment" placeholder="Share your experience with this product..." rows="4"></textarea>
                     </div>
                     <div style="display: flex; gap: 10px">
-                      <button
-                        type="submit"
-                        class="btn btn-primary"
-                        [disabled]="reviewSaving"
-                      >
-                        @if (reviewSaving) {
-                          <span class="spinner-sm"></span>
-                        }
+                      <button type="submit" class="btn btn-primary" [disabled]="reviewSaving">
+                        @if (reviewSaving) { <span class="spinner-sm"></span> }
                         {{ editingReview ? "Update Review" : "Submit Review" }}
                       </button>
                       @if (editingReview) {
-                        <button
-                          type="button"
-                          class="btn btn-ghost"
-                          (click)="
-                            editingReview = null;
-                            reviewForm.reset({ rating: 5, comment: '' })
-                          "
-                        >
+                        <button type="button" class="btn btn-ghost" (click)="editingReview = null; reviewForm.reset({ rating: 5, comment: '' })">
                           Cancel
                         </button>
                       }
@@ -324,53 +207,25 @@
                     <div class="review-card card animate-fadeInUp">
                       <div class="review-header">
                         <div class="reviewer-avatar">
-                          {{
-                            (
-                              review.user?.firstName ||
-                              review.userName ||
-                              "?"
-                            ).charAt(0) | uppercase
-                          }}
+                          {{ (review.user?.firstName || review.userName || '?').charAt(0) | uppercase }}
                         </div>
                         <div class="reviewer-info">
                           <p class="reviewer-name">
-                            {{
-                              review.user
-                                ? review.user.firstName +
-                                  " " +
-                                  review.user.lastName
-                                : review.userName
-                            }}
+                            {{ review.user ? review.user.firstName + ' ' + review.user.lastName : review.userName }}
                           </p>
-                          <p class="review-date">
-                            {{ review.createdAt | date: "mediumDate" }}
-                          </p>
+                          <p class="review-date">{{ review.createdAt | date: "mediumDate" }}</p>
                         </div>
                         <div class="review-stars">
                           @for (s of getStars(review.rating); track $index) {
-                            <span
-                              [style.color]="s ? '#f59e0b' : '#e5e7eb'"
-                              style="font-size: 18px"
-                              >★</span
-                            >
+                            <span [style.color]="s ? '#f59e0b' : '#e5e7eb'" style="font-size: 18px">★</span>
                           }
                         </div>
                       </div>
                       <p class="review-comment">{{ review.comment }}</p>
-                      @if (isLoggedIn) {
+                      @if (isLoggedIn && currentUserId !== null && review.user?.id === currentUserId) {
                         <div class="review-actions">
-                          <button
-                            class="btn btn-ghost btn-sm"
-                            (click)="startEditReview(review)"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            class="btn btn-danger btn-sm"
-                            (click)="deleteReview(review.id)"
-                          >
-                            Delete
-                          </button>
+                          <button class="btn btn-ghost btn-sm" (click)="startEditReview(review)">Edit</button>
+                          <button class="btn btn-danger btn-sm" (click)="deleteReview(review.id)">Delete</button>
                         </div>
                       }
                     </div>

@@ -27,7 +27,7 @@
   @media (max-width: 768px) { grid-template-columns: 1fr; gap: 28px; }
 }
 
-.product-gallery { position: sticky; top: 90px; height: fit-content; }
+.product-gallery { top: 90px; height: fit-content; }
 
 .main-image {
   border-radius: var(--radius-lg);

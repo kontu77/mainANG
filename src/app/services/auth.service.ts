@@ -28,6 +28,14 @@ export class AuthService {
     return this.http.post(`${this.api}/auth/register`, data);
   }
 
+  verifyEmail(data: { email: string; code: string }): Observable<any> {
+  return this.http.put(`${this.api}/auth/verify-email`, data);
+}
+
+resendEmailVerification(email: string): Observable<any> {
+  return this.http.post(`${this.api}/auth/resend-email-verification/${email}`, {});
+}
+
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.api}/auth/login`, data).pipe(
       tap(res => this.saveTokens(res, false))

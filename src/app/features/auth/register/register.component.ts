@@ -30,10 +30,10 @@ export class RegisterComponent {
     confirmPassword: ['', Validators.required]
   }, { validators: passwordMatch });
 
-  loading = false;
-  error = '';
-  success = '';
-  showPw = false;
+loading = false;
+error = '';
+success = '';
+showPw = false;
 
   get f() { return this.form.controls; }
 
@@ -43,9 +43,10 @@ export class RegisterComponent {
     this.error = '';
     this.authService.register(this.form.value as any).subscribe({
       next: () => {
-        this.success = 'Registration successful! Please check your email to verify.';
         this.loading = false;
-        setTimeout(() => this.router.navigate(['/auth/login']), 2500);
+        this.router.navigate(['/auth/verify-email'], {
+          queryParams: { email: this.form.value.email }
+        });
       },
       error: (e) => {
         this.error = e.error?.message || 'Registration failed. Please try again.';

@@ -18,6 +18,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/register/register.component').then(m => m.RegisterComponent)
       },
       {
+        path: 'verify-email',
+        loadComponent: () => import('./features/auth/verify-email/verify-email.component').then(m => m.VerifyEmailComponent)
+      },
+      {
         path: 'forgot-password',
         loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
       },
@@ -59,6 +63,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
+
   {
     path: 'products',
     loadComponent: () => import('./features/products/product-list/product-list.component').then(m => m.ProductListComponent)

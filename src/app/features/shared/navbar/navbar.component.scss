@@ -95,6 +95,13 @@
     color: rgba(255,255,255,0.8);
     &:hover { background: rgba(255,255,255,0.12); color: white; }
   }
+
+  @media (max-width: 768px) {
+    .cart-btn,
+    .avatar-btn,
+    .btn-ghost,
+    .admin-badge { display: none; }
+  }
 }
 
 .cart-btn {
@@ -182,7 +189,6 @@
   @media (max-width: 768px) { display: flex; }
 }
 
-/* Mobile menu */
 .mobile-menu {
   background: rgba(10, 20, 60, 0.98);
   backdrop-filter: blur(12px);

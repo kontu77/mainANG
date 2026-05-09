@@ -117,6 +117,7 @@ export interface ReviewResponse {
   userId: number;
   userName: string;
   user?: {
+    id?: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -169,7 +170,7 @@ export interface AddToCartRequest {
 }
 
 export interface EditCartItemRequest {
-  itemId: number;  // ← სწორი
+  itemId: number;
   quantity: number;
 }
 

@@ -71,9 +71,9 @@ export class VerifyEmailComponent implements OnInit {
     this.error = '';
     this.authService.verifyEmail(this.form.value as any).subscribe({
       next: () => {
-        this.success = 'Email verified successfully! Redirecting...';
+        this.success = 'Email verified! Redirecting to login...';
         this.loading = false;
-        setTimeout(() => this.router.navigate(['/products']), 2000);
+        setTimeout(() => this.router.navigate(['/auth/login']), 2000);
       },
       error: (e) => { this.error = e.error?.message || 'Verification failed.'; this.loading = false; }
     });
